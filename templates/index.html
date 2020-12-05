@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>
+            Mazel.fun | Realtime Multiplayer Maze Game
+        </title>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/p5.js/0.8.0/p5.min.js" type="text/javascript"> </script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/p5.js/0.8.0/addons/p5.dom.min.js" type="text/javascript"></script>
+		<script src="//ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/p5.js/0.8.0/addons/p5.sound.min.js" type="text/javascript"></script>
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
+        <script type="text/javascript" src="{{ url_for('static', filename ='p5.play.js')}}"></script>
+        <script type="text/javascript" src="{{url_for('static',filename='keydrown.min.js')}}"></script>
+        <script type="text/javascript" src="{{ url_for('static', filename = 'index.js') }}"></script>
+        <link rel="stylesheet" tpye="text/css" href="{{ url_for('static', filename = 'style.css') }}"></link>
+
+      <script type="text/javascript">
+        $( document ).ready(function(){
+          $("#nameInput").keypress(function(event)
+          {
+            if (event.which == 13)
+            {
+                event.preventDefault();
+                startGame();
+            }
+          })});
+      </script>
+    </head>
+</html>
+<body>
+    <div id="start-screen">
+    <div id="logo">Mazel.fun</div><br/>
+    <input id="nameInput" type="text" placeholder="Enter your username" name="enter_name">
+    <div class="playButton" id="playButton" onclick="startGame()">Play</div>
+    <div id="instructions">
+         <h3>How to play</h3>
+        <hr width=100% color="white">
+        <ul>
+        <li>You are the blue square, move with WASD or arrow keys</li>
+        <li>Navigate to the star at the end of the maze</li>
+        <li>Press the spacebar button to faze through a wall</li>
+        <li>You can faze 3 times per round</li>
+        <li>Rounds last 150 seconds at most</li>
+    </ul>
+     </div>
+</div>
+    <div id="lobby-screen">
+    <h3 id="queue" style="display: none; color:white; text-align: center;">Waiting in queue...</h3>
+     <h3 id="playerCount" style="display: none; color:white; text-align: center;">1/10</h3>
+ </div>
+ <div id="game-container">
+<div id="canvas-container" class="container">
+<div id="leaderboard">
+    <div id="rounds">Round 1 of 3</div>
+        <hr width=100% color="white">
+    <div id="timer">0:00</div>
+            <hr width=100% color="white">
+
+<div id="leaderboard-entries">
+    
+</div>
+</div>
+</div>
+</div>
+<div id="templates">
+    <div id="leaderboard-entry" class="leaderboard-entry">
+        <div class="block"></div>
+        <div class="player-name">Test player</div>
+        <div class="player-score">Score: 15</div>
+    </div>
+</div>
+</body>
