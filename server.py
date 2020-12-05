@@ -22,9 +22,9 @@ class Player():
 		self.roomID=roomID
 		self.playerID=playerID
 		self.phasesLeft=3
-		self.score=0;
-		self.isAbleToPhase=False;
-		self.isRacing=False;
+		self.score=0
+		self.isAbleToPhase=False
+		self.isRacing=False
 		self.color={'r':random.randint(0,255),'g':random.randint(0,255),'b':random.randint(0,255)}
 	def serialize(self):
 		return{
@@ -62,19 +62,19 @@ class Bot(Player):
 		return firstName+random.choice(["_"," ",""])+secondName+str(number)
 class Room():
 	def __init__(self,seed,maze):
-		self.playerList=[];
+		self.playerList=[]
 		self.gameStarted=False
-		self.isRoundOnGoing=False;
-		self.seed=seed;
+		self.isRoundOnGoing=False
+		self.seed=seed
 		self.maze=maze
 		self.solutions=[generateMazeSolution(maze) for i in range(1,20)][16:20]
 		random.shuffle(self.solutions)
 		self.solutions.append(generateMazeSolution(maze,"medium"))
 		self.solutions.append(generateMazeSolution(maze,"hard"))
 		self.roundsLeft=3
-		self.playersDoneRacing=0;
-		self.roundStartTime=datetime.utcnow();
-		self.roundEndTimer=None;
+		self.playersDoneRacing=0
+		self.roundStartTime=datetime.utcnow()
+		self.roundEndTimer=None
 		self.botNames=["Monkey","Pants","Unicorn","Noob","TTV","Bert","Banana","Master","Overlord","Booty","Blaster","Icy"]
 	def add_player(self,player):
 		self.playerList.append(player)
@@ -105,27 +105,27 @@ class Room():
 		}
 def finishReached(player,roomID,sid=""):
 	player.isRacing=False
-	raceCompletionTime=(datetime.utcnow()-ROOMS[roomID].roundStartTime).total_seconds();
-	player.score+=round(1000/raceCompletionTime);
+	raceCompletionTime=(datetime.utcnow()-ROOMS[roomID].roundStartTime).total_seconds()
+	player.score+=round(1000/raceCompletionTime)
 	print(round(raceCompletionTime,2))
 	message=json.dumps(player.serialize())
-	if sid is not "":
+	if sid:
 		socketio.emit("players_updated",message,room=roomID,skip_sid=sid)
 	else:
 		socketio.emit("players_updated",message,room=roomID)
-	ROOMS[roomID].playerList.sort(key= lambda x:x.score,reverse=True);
+	ROOMS[roomID].playerList.sort(key= lambda x:x.score,reverse=True)
 	message=json.dumps(ROOMS[roomID].serialize())
 	socketio.emit("update_leaderboard",message,room=roomID)
-	if sid is not "":
+	if sid:
 		socketio.emit("finished_race",str(round(raceCompletionTime,2)),room=sid)
 	ROOMS[roomID].playersDoneRacing+=1
 	if ROOMS[roomID].playersDoneRacing==3 or ROOMS[roomID].playersDoneRacing>=len(ROOMS[roomID].playerList):
-		ROOMS[roomID].isRoundOnGoing=False;
+		ROOMS[roomID].isRoundOnGoing=False
 		message=json.dumps(ROOMS[roomID].serialize(sid))
 		ROOMS[roomID].roundsLeft-=1
 		ROOMS[roomID].roundEndTimer.cancel()
 		if ROOMS[roomID].roundsLeft>0:
-			socketio.emit("round_over",message,room=roomID);
+			socketio.emit("round_over",message,room=roomID)
 			eventlet.spawn_after(3,startNextRound,roomID)
 		else:
 			message=ROOMS[roomID].playerList[0].playerName
@@ -138,7 +138,7 @@ def index():
 	return render_template('index.html')
 @socketio.on('entered_queue')
 def handleConnect(data):
-	if data['name'] is "":
+	if data['name'] == "":
 		PLAYERS[request.sid]=Player(0,0,request.sid)
 	else:
 		PLAYERS[request.sid]=Player(0,0,request.sid,data['name'])
@@ -148,7 +148,7 @@ def handleConnect(data):
 		print(str(room.gameStarted))
 		if len(room.playerList)<10 and room.gameStarted==False:
 			matchFound=True
-			PLAYERS[request.sid].roomID=seed;
+			PLAYERS[request.sid].roomID=seed
 			room.add_player(PLAYERS[request.sid])
 			join_room(seed)
 			emit("update_player_count",len(room.playerList),room=seed)
